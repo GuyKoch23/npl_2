@@ -76,21 +76,23 @@ def int_to_one_hot(number, dim):
 
 
 def lm_wrapper(in_word_index, out_word_index, num_to_word_embedding, dimensions, params):
-
-    data = np.zeros([BATCH_SIZE, dimensions[0]])
-    labels = np.zeros([BATCH_SIZE, dimensions[2]])
-
-    batch_size = BATCH_SIZE
-    rand_indices = np.random.choice(len(in_word_index), size=batch_size, replace=False)
-    data = np.array([num_to_word_embedding[idx] for idx in np.array(in_word_index)[rand_indices]])
-    labels = np.zeros((batch_size, output_dim))
-    for i, idx in enumerate(np.array(out_word_index)[rand_indices]):
-        labels[i, idx] = 1.0  # One-hot encoding
+    
+    word_indexes = np.random.randint(low=0, high=len(in_word_index), size=BATCH_SIZE)
+    words = np.array(in_word_index)[word_indexes]
+    
+    data = np.array(num_to_word_embedding)[words]
+    
+    vecrotize = np.vectorize(int_to_one_hot, excluded=['dim'], signature='() -> (n)')
+    labels = vecrotize(number=np.array(out_word_index)[word_indexes], dim=output_dim)
+    
     cost, grad = forward_backward_prop(data, labels, params, dimensions)
-
+    
     cost /= BATCH_SIZE
     grad /= BATCH_SIZE
+
     return cost, grad
+
+
 
 
 def eval_neural_lm(eval_data_path):
