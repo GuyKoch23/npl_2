@@ -86,8 +86,8 @@ def lm_wrapper(in_word_index, out_word_index, num_to_word_embedding, dimensions,
     in_words = in_word_index[word_indexes]
     data = num_to_word_embedding[in_words]
     
-    vecrotize = np.vectorize(int_to_one_hot, excluded=['dim'], signature='() -> (n)')
-    labels = vecrotize(number=np.array(out_word_index)[word_indexes], dim=output_dim)
+    int_to_one_hot_vectorized = np.vectorize(int_to_one_hot, excluded=['dim'], signature='() -> (n)')
+    labels = int_to_one_hot_vectorized(number=np.array(out_word_index)[word_indexes], dim=output_dim)
     cost, grad = forward_backward_prop(data, labels, params, dimensions)
     ### END YOUR CODE
     
