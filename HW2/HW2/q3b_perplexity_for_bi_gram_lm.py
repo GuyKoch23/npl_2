@@ -44,7 +44,6 @@ def load_data_as_sentences(path, word_to_num):
     S_data = utils.docs_to_indices(docs_data, word_to_num)
     return docs_data, S_data
 
-
 def convert_to_lm_dataset(S):
     """
     Takes a dataset that is a list of sentences as an array of integer arrays.
@@ -172,6 +171,14 @@ if __name__ == "__main__":
         "Perplexity of wikipedia_for_perplexity.txt: "
         + str(eval_neural_lm("wikipedia_for_perplexity.txt"))
     )
+    print(
+        "Perplexity of shakespeare_for_perplexity_preprocessed_for_bi_gram_lm.txt: "
+        + str(eval_neural_lm("shakespeare_for_perplexity_preprocessed_for_bi_gram_lm.txt"))
+    )
+    print(
+        "Perplexity of wikipedia_for_perplexity_preprocessed_for_bi_gram_lm.txt: "
+        + str(eval_neural_lm("wikipedia_for_perplexity_preprocessed_for_bi_gram_lm.txt")))
+    # )
 
     # Evaluate perplexity with test-data (only at test time!)
     if os.path.exists('data/lm/ptb-test.txt'):

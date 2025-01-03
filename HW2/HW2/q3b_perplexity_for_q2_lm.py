@@ -220,11 +220,21 @@ def perplexity(text_file):
     return perplexity
 
 
-print(
-    "Perplexity of shakespeare_for_perplexity.txt: "
-    + str(perplexity("shakespeare_for_perplexity.txt"))
-)
-print(
-    "Perplexity of wikipedia_for_perplexity.txt: "
-    + str(perplexity("wikipedia_for_perplexity.txt"))
-)
+if __name__ == "__main__":
+    print(
+        "Perplexity of shakespeare_for_perplexity.txt: "
+        + str(perplexity("shakespeare_for_perplexity.txt"))
+    )
+    print(
+        "Perplexity of wikipedia_for_perplexity.txt: "
+        + str(perplexity("wikipedia_for_perplexity.txt"))
+    )
+
+    print(
+        "Perplexity of shakespeare_for_perplexity_preprocessed_for_q2_lm.txt: "
+        + str(perplexity("shakespeare_for_perplexity_preprocessed_for_q2_lm.txt"))
+    )
+    print(
+        "Perplexity of wikipedia_for_perplexity_preprocessed_for_q2_lm.txt: "
+        + str(perplexity("wikipedia_for_perplexity_preprocessed_for_q2_lm.txt"))
+    )
