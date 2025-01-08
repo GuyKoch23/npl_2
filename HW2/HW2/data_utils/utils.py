@@ -20,7 +20,7 @@ def docs_to_indices(docs, word_to_num):
 
 def load_dataset(fname):
     docs = []
-    with open(fname, "r", encoding="utf-8") as fd:
+    with open(fname, "r") as fd:
         cur = []
         for line in fd:
             # new sentence on -DOCSTART- or blank line
@@ -32,6 +32,43 @@ def load_dataset(fname):
                 cur.append(line.strip().split("\t",1))
         # flush running buffer
         docs.append(cur)
+    return docs
+
+
+def preprocess(fname):
+    # Open and read the file with UTF-8 encoding
+    with open(fname, "r", encoding="utf-8") as file:
+        text = file.read()
+
+    # Remove punctuation and convert to lowercase
+    text = re.sub(r"[^\w\s]", "", text).lower()
+    # Split text into words
+    words = text.split()
+    # Create pairs of bigrams
+    bigrams = [(words[i], words[i + 1]) for i in range(len(words) - 1)]
+    # Join bigrams with newlines
+    text = "\n".join([f"{bigram[0]} {bigram[1]}" for bigram in bigrams])
+    # Split the text back into lines
+    lines = text.split("\n")
+
+    return lines
+
+
+def load_dataset_with_preprocessing(fname):
+    docs = []
+    lines = preprocess(fname)
+    cur = []
+    for line in lines:
+        # new sentence on -DOCSTART- or blank line
+        if re.match(r"-DOCSTART-.+", line) or (len(line.strip()) == 0):
+            if len(cur) > 0:
+                docs.append(cur)
+            cur = []
+        else:  # read in tokens
+            cur.append(line.strip().split("\t",1))
+    # flush running buffer
+    docs.append(cur)
+
     return docs
 
 

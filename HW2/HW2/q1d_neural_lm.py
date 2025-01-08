@@ -44,6 +44,20 @@ def load_data_as_sentences(path, word_to_num):
     S_data = utils.docs_to_indices(docs_data, word_to_num)
     return docs_data, S_data
 
+def load_data_as_sentences_with_preprocessing(path, word_to_num):
+    """
+    Conv:erts the training data to an array of integer arrays.
+      args: 
+        path: string pointing to the training data
+        word_to_num: A dictionary from string words to integers
+      returns:
+        An array of integer arrays. Each array is a sentence and each 
+        integer is a word.
+    """
+    docs_data = utils.load_dataset_with_preprocessing(path)
+    S_data = utils.docs_to_indices(docs_data, word_to_num)
+    return docs_data, S_data
+
 
 def convert_to_lm_dataset(S):
     """
@@ -119,6 +133,26 @@ def eval_neural_lm(eval_data_path):
 
     return perplexity
 
+def eval_neural_lm_with_preprocessing(eval_data_path):
+    """
+    Evaluate perplexity (use dev set when tuning and test at the end)
+    """
+    _, S_dev = load_data_as_sentences_with_preprocessing(eval_data_path, word_to_num)
+    in_word_index, out_word_index = convert_to_lm_dataset(S_dev)
+    assert len(in_word_index) == len(out_word_index)
+    num_of_examples = len(in_word_index)
+    
+    perplexity = 0
+    ### YOUR CODE HERE
+    for i in range(num_of_examples):
+        in_embed = num_to_word_embedding[in_word_index[i]]
+        probs = forward(in_embed, out_word_index[i], params, dimensions)
+        perplexity += np.log2(probs)
+    perplexity = 2**(-perplexity / num_of_examples)
+    ### END YOUR CODE
+
+    return perplexity
+
 
 if __name__ == "__main__":
     # Load the vocabulary
@@ -167,6 +201,23 @@ if __name__ == "__main__":
     # Evaluate perplexity with dev-data
     perplexity = eval_neural_lm('data/lm/ptb-dev.txt')
     print(f"dev perplexity : {perplexity}")
+
+    print(
+        "Perplexity of shakespeare_for_perplexity.txt: "
+        + str(eval_neural_lm("shakespeare_for_perplexity.txt"))
+    )
+    print(
+        "Perplexity of wikipedia_for_perplexity.txt: "
+        + str(eval_neural_lm("wikipedia_for_perplexity.txt"))
+    )
+    print(
+        "Perplexity of preprocessed shakespeare_for_perplexity.txt: "
+        + str(eval_neural_lm_with_preprocessing("shakespeare_for_perplexity.txt"))
+    )
+    print(
+        "Perplexity of preprocessed wikipedia_for_perplexity.txt: "
+        + str(eval_neural_lm_with_preprocessing("wikipedia_for_perplexity.txt"))
+    )
 
     # Evaluate perplexity with test-data (only at test time!)
     if os.path.exists('data/lm/ptb-test.txt'):
